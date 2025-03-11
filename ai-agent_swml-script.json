@@ -1,0 +1,157 @@
+{
+    "version": "1.0.0",
+    "sections": {
+        "main": [
+            {
+                "ai": {
+                    "languages": [
+                        {
+                            "name": "English",
+                            "code": "en-US",
+                            "voice": "deepgram.aura-orion-en",
+                            "function_fillers": [
+                                "one moment, please",
+                                "let's see",
+                                "affirmative",
+                                "checking"
+                            ]
+                        }
+                    ],
+                    "prompt": {
+                        "text": "# Name and Personality\nYour name is Jake and you are a virtual Customer Support agent for a life insurance company.\n\n# Mission Brief\nYour aim is to provide callers with assistance regarding their life insurance policy options: including policy overview, callbcack scheduling, and transfer to a local, licensed insurance agent.\n\n# Customer Support Agent Guidelines\nFollow these steps to ensure the proper life insurance information is passed along to the caller:\n\n## Step 1\nGreet the caller, then introduce yourself and your mission.\n## Step 2\nAsk the caller if they are ready to proceed with learning more about their life insurance options.\n### Step 2.1\nIf the caller answers affirmatively, proceed to Step 3.\n### Step 2.2\nIf the caller responds negatively, reply with a witty allusion to the death benefit of this conversation, then hang up the call.\n\n## Step 3\nAsk the caller what type of life insurance policy interests them: Term, Whole, or Universal? Do not proceed until the policy type is given.\n\n## Step 4\nArmed with the policy type, use the `fetch_insurance_info` function to retrieve details relevant to the caller's interest.\n### Step 4.1\nIf the policy details were successfully retrieved, proceed to Step 5.\n### Step 4.2\nIf the policy details are null, alert the caller, then return to Step 3.\n\n## Step 5\nAsk the caller how they would like to continue with exploring your policy options: scheduling a callback or transfer to local, licensed insurance agent?\n### Step 5.1\nIf the caller selects a callback, proceed to Step 6.\n### Step 5.2\nIf the caller selects a transfer, proceed to Step 7.\n\n## Step 6\nAsk the caller for their full name. Do not proceed until their name is given.\n### Step 6.1\nAsk the caller if they'd like to use ${call.from} as the phone number for their callback. Do not proceed until the caller confirms their phone number.\n### Step 6.2\nUse the `create_lead_record` function to store the caller's information for an upcoming callback.\n### Step 6.3\nIf confirmation of record creation is received, then proceed to Step 8.\n### Step 6.4\nIf confirmation of record creation is null, alert the caller, then return to Step 5.\n\n## Step 7\nUse the `transfer_lead` function to shepherd the caller to a live insurance agent.\n### Step 7.1\nIf the caller was successfully transferred, then hang up the call.\n### Step 7.2\nIf the caller cannot be transferred, alert the caller, then return to Step 5.\n\n## Step 8\nAsk the caller if they are satisfied with the life insurnace policy information provided for them.\n### Step 8.1\nIf the caller answers affirmatively, leave them with a genial parting about living life to the fullest, then proceed to hang up the call.\n### Step 8.2\nIf the caller responds negatively, then return to Step 5."
+                    },
+                    "post_prompt": {
+                        "text": "Summarize the call in a JSON format."
+                    },
+                    "post_prompt_url": "<YOUR-DEBUGGING-WEBHOOK>",
+                    "params": {
+                        "direction": "inbound",
+                        "swaig_allow_swml": true
+                    },
+                    "SWAIG": {
+                        "functions": [
+                            {
+                                "function": "fetch_insurance_info",
+                                "description": "Retrieve details of available life insurance policies.",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {
+                                        "policy_type": {
+                                            "type": "string",
+                                            "description": "Type of life insurance policy the caller is interested in (e.g., term, whole, universal)."
+                                        }
+                                    }
+                                },
+                                "data_map": {
+                                    "webhooks": [
+                                        {
+                                            "method": "POST",
+                                            "url": "https://<YOUR-SPACE>.signalwire.com/api/datasphere/documents/search",
+                                            "headers": {
+                                                "Content-Type": "application/json",
+                                                "Authorization": "Basic <(BASE64-ENCODED)YOUR-PROJECT-ID:YOUR-API-TOKEN>"
+                                            },
+                                            "params": {
+                                                "query_string": "${enc:args.policy_type}",
+                                                "document_id": "33dd02a2-429c-4374-ab4e-68d8369cacf5",
+                                                "count": 3
+                                            },
+                                            "output": {
+                                                "response": "Use this information to answer the user's questions about their life insurance policy of interest. Provide answers strictly from this information: ${chunks[0].text} and ${chunks[0].document_id}"
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "function": "create_lead_record",
+                                "description": "Generate a file containing the caller's phone number and insurance policy interest.",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "description": "The name given by the caller."
+                                        },
+                                        "phone_number": {
+                                            "type": "string",
+                                            "description": "The phone number given by the caller."
+                                        },
+                                        "policy_interest": {
+                                            "type": "string",
+                                            "description": "The type of policy the caller is interested in learning more about."
+                                        }
+                                    }
+                                },
+                                "data_map": {
+                                    "webhooks": [
+                                        {
+                                            "url": "https://<YOUR-SERVER-ADDRESS>/create_lead_record?name=${enc:args.name}&phone_number=${enc:args.phone_number}&policy_interest=${enc:args.policy_interest}",
+                                            "method": "GET",
+                                            "output": {
+                                                "response": "The details of the lead have been successfully recorded."
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "function": "transfer_lead",
+                                "description": "Transfer the caller to a live representative.",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {
+                                        "destination": {
+                                            "type": "string",
+                                            "description": "The destination to transfer the caller to."
+                                        }
+                                    }
+                                },
+                                "data_map": {
+                                    "expressions": [
+                                        {
+                                            "string": "${args.destination}",
+                                            "pattern": ".*",
+                                            "output": {
+                                                "response": "Call transfer initiated.",
+                                                "action": [
+                                                    {
+                                                        "say": "Please stand by while I transfer your call."
+                                                    },
+                                                    {
+                                                        "SWML": {
+                                                            "sections": {
+                                                                "main": [
+                                                                    {
+                                                                        "connect": {
+                                                                            "confirm": "<YOUR-SWML-SCRIPT-ADDRESS>",
+                                                                            "parallel": [
+                                                                                {
+                                                                                    "to": "<YOUR-PSTN-NUMBER>"
+                                                                                },
+                                                                                {
+                                                                                    "to": "sip:<YOUR-SIP-ENDPOINT>"
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "stop": true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}
