@@ -4,8 +4,8 @@
 1. [Introduction](#introduction)
 2. [Overview](#overview)
 3. [Functions/Capabilities](#functionscapabilities)
-   - [insurance_info](#function-insurance_info)
-   - [store_lead_info](#function-store_lead_info)
+   - [fetch_insurance_info](#function-fetch_insurance_info)
+   - [create_lead_record](#function-create_lead_record)
    - [transfer_lead](#function-transfer_lead)
 4. [Environment Variables](#environment-variables)
 5. [Sample Prompt for the AI Agent](#sample-prompt-for-the-ai-agent)
@@ -42,13 +42,13 @@ This AI Agent is designed to:
 
 ## Functions/Capabilities
 
-### Function: `insurance_info`
+### Function: `fetch_insurance_info`
 **Purpose:** Provides details about various life insurance policies.
 
 #### OpenAI Tool Specification:
 ```json
 {
-  "function": "insurance_info",
+  "function": "fetch_insurance_info",
   "description": "Retrieve details of available life insurance policies.",
   "parameters": {
     "type": "object",
@@ -62,52 +62,25 @@ This AI Agent is designed to:
 }
 ```
 
-#### Node.js Implementation:
-```javascript
-app.get("/insurance-info", (req, res) => {
-    const { policy_type } = req.query;
-    
-    const policies = {
-        "term": "Term life insurance provides coverage for a fixed period.",
-        "whole": "Whole life insurance offers lifelong coverage and cash value.",
-        "universal": "Universal life insurance combines flexibility and investment opportunities."
-    };
-    
-    res.json({ message: policies[policy_type] || "Policy type not found." });
-});
-```
-
 ---
 
-### Function: `store_lead_info`
+### Function: `create_lead_record`
 **Purpose:** Captures and stores the caller’s personal details and insurance interests.
 
 #### OpenAI Tool Specification:
 ```json
 {
-  "function": "store_lead_info",
+  "function": "create_lead_record",
   "description": "Stores lead details, including name, contact information, and insurance interest.",
   "parameters": {
     "type": "object",
     "properties": {
       "name": { "type": "string", "description": "Caller's name." },
-      "phone": { "type": "string", "description": "Caller's phone number." },
+      "phone_number": { "type": "string", "description": "Caller's phone number." },
       "policy_interest": { "type": "string", "description": "Type of insurance the caller is interested in." }
     }
   }
 }
-```
-
-#### Node.js Implementation:
-```javascript
-app.post("/store-lead", (req, res) => {
-    const { name, phone, policy_interest } = req.body;
-    
-    // Simulate storing lead information
-    console.log(`New lead: ${name}, ${phone}, interested in ${policy_interest}`);
-    
-    res.json({ message: "Lead information stored successfully." });
-});
 ```
 
 ---
@@ -120,16 +93,16 @@ app.post("/store-lead", (req, res) => {
 {
   "function": "transfer_lead",
   "description": "Transfers the call to a human agent.",
-  "parameters": {}
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "destination": {
+        "type": "string",
+        "description": "The destination to transfer the caller to."
+      }
+    }
+  }
 }
-```
-
-#### Node.js Implementation:
-```javascript
-app.post("/transfer-lead", (req, res) => {
-    console.log("Transferring caller to live representative...");
-    res.json({ message: "Call transferred successfully." });
-});
 ```
 
 ---
@@ -145,7 +118,9 @@ Ensure the following environment variables are configured:
 
 ## Sample Prompt for the AI Agent
 ```
-You are a virtual assistant for a life insurance company. Your job is to greet callers, provide accurate information about life insurance products, collect their details, and transfer them to a live representative when necessary.
+Your name is Jake, and you are a virtual Customer Support agent for a life insurance company.
+
+Your mission is to provide callers with assistance regarding their life insurance policy options, including policy overview, callback scheduling, and transfer to a local, licensed insurance agent.
 ```
 
 ---
