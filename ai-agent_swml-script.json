@@ -124,7 +124,7 @@
                                                                 "main": [
                                                                     {
                                                                         "connect": {
-                                                                            "confirm": "<YOUR-SWML-SCRIPT-ADDRESS>",
+                                                                            "confirm": "<REQUEST-URL-FOR-CONNECTION-PROMPT>",
                                                                             "parallel": [
                                                                                 {
                                                                                     "to": "<YOUR-PSTN-NUMBER>"
