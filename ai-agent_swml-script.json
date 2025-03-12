@@ -53,7 +53,7 @@
                                             },
                                             "params": {
                                                 "query_string": "${enc:args.policy_type}",
-                                                "document_id": "33dd02a2-429c-4374-ab4e-68d8369cacf5",
+                                                "document_id": "<YOUR-DATASPHERE-DOCUMENT-ID>",
                                                 "count": 3
                                             },
                                             "output": {
