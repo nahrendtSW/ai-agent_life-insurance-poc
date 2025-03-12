@@ -26,6 +26,8 @@
                     "post_prompt_url": "<YOUR-DEBUGGING-WEBHOOK>",
                     "params": {
                         "direction": "inbound",
+                        "ai_volume": 10,
+                        "end_of_speech_timeout": 3000,
                         "swaig_allow_swml": true
                     },
                     "SWAIG": {
@@ -52,7 +54,7 @@
                                                 "Authorization": "Basic <(BASE64-ENCODED)YOUR-PROJECT-ID:YOUR-API-TOKEN>"
                                             },
                                             "params": {
-                                                "query_string": "${enc:args.policy_type}",
+                                                "query_string": "${lc:enc:args.policy_type}",
                                                 "document_id": "<YOUR-DATASPHERE-DOCUMENT-ID>",
                                                 "count": 3
                                             },
@@ -65,7 +67,7 @@
                             },
                             {
                                 "function": "create_lead_record",
-                                "description": "Generate a file containing the caller's phone number and insurance policy interest.",
+                                "description": "Generate a record containing the caller's phone number and insurance policy interest.",
                                 "parameters": {
                                     "type": "object",
                                     "properties": {
@@ -75,7 +77,7 @@
                                         },
                                         "phone_number": {
                                             "type": "string",
-                                            "description": "The phone number given by the caller."
+                                            "description": "The phone number given by the caller in E.164 format."
                                         },
                                         "policy_interest": {
                                             "type": "string",
@@ -86,7 +88,7 @@
                                 "data_map": {
                                     "webhooks": [
                                         {
-                                            "url": "https://<YOUR-SERVER-ADDRESS>/create_lead_record?name=${enc:args.name}&phone_number=${enc:args.phone_number}&policy_interest=${enc:args.policy_interest}",
+                                            "url": "https://<YOUR-SERVER-ADDRESS>/create_lead_record?name=${enc:args.name}&phone_number=${enc:args.phone_number}&policy_interest=${lc:enc:args.policy_interest}",
                                             "method": "GET",
                                             "output": {
                                                 "response": "The details of the lead have been successfully recorded."
