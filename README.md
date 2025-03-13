@@ -28,9 +28,10 @@ This AI Agent is designed to:
 - Transfer qualified leads to human agents for further assistance.
 
 ### Technology Stack
-- **SignalWire AI Gateway (SWAIG)** for telephony AI handling.
-- **Node.js** server for backend processing.
-- **REST APIs** for lead management and information retrieval.
+- **SignalWire Markup Language (SWML)** for call flow instructions expressed in JSON.
+- **SignalWire AI Gateway (SWAIG)** for telephony AI function handling.
+- **Datasphere API** for Retrieval-Augmented Generation (RAG) onf insurance info.
+- **Node.js** server for backend processing of lead records.
 
 ### Workflow
 1. **Caller initiates contact** → AI greets the caller.
