@@ -3,6 +3,16 @@
     "sections": {
         "main": [
             {
+                "play": {
+                    "url": "say:This call may be recorded for quality assurance or future training purposes."
+                }
+            },
+            {
+                "record_call": {
+                    "beep": true
+                }
+            },
+            {
                 "ai": {
                     "languages": [
                         {
