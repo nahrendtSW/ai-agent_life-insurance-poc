@@ -30,7 +30,7 @@ This AI Agent is designed to:
 ### Technology Stack
 - **SignalWire Markup Language (SWML)** for call flow instructions expressed in JSON.
 - **SignalWire AI Gateway (SWAIG)** for telephony AI function handling.
-- **Datasphere API** for Retrieval-Augmented Generation (RAG) onf insurance info.
+- **Datasphere API** for Retrieval-Augmented Generation (RAG) of insurance info.
 - **Node.js** server for backend processing of lead records.
 
 ### Workflow
@@ -113,7 +113,8 @@ Ensure the following environment variables are configured:
 - `SIGNALWIRE_PROJECT_ID` - SignalWire Project ID.
 - `SIGNALWIRE_API_TOKEN` - SignalWire API token.
 - `SIGNALWIRE_SPACE_DOMAIN` - SignalWire Space Domain.
-- `NODE_ENV` - Environment mode (development/production).
+- `DATASPHERE_DOCUMENT_ID` - PDF to draw insurance information from.
+- `DEBUGGING_WEBHOOK` - Development tool for conversation flow, function i/o, and latency monitoring.
 
 ---
 
